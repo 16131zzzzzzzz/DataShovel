@@ -1,0 +1,9 @@
+input/data
+output
+resources/pretrained_model/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd

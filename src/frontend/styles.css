@@ -1,0 +1,35 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  display: flex;
+  height: 100vh; /* Set height to viewport height */
+}
+
+.pdf-container {
+  flex: 1; /* Make .pdf-container take half of the width */
+  display: flex;
+  justify-content: center; /* Center the content horizontally */
+  align-items: center; /* Center the content vertically */
+  position: relative;
+}
+
+.content-container {
+  flex: 1; /* Make .content-container take half of the width */
+  padding: 20px;
+  overflow-y: auto; /* Add vertical scroll */
+}
+
+.box {
+  border: 2px solid #3498db;
+  margin-bottom: 10px;
+  cursor: pointer;
+  white-space: pre-line;
+}
+
+.box:hover {
+  background-color: #3498db;
+  color: #fff;
+}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.js"></script>
+  <title>PDF Viewer</title>
+</head>
+<body>
+  <div class="container">
+    <div class="pdf-container">
+      <canvas id="pdf-canvas"></canvas>
+      <canvas id="temp-canvas"></canvas>
+      <canvas id="rect-canvas"></canvas>
+    </div>
+    <div class="content-container">
+      <div id="pagenum-content"></div>
+      <div id="box-content"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
