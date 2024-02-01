@@ -1,6 +1,7 @@
 input/data
 output
 resources/pretrained_model/
+test/
 
 # Python
 __pycache__/
