@@ -1,14 +1,14 @@
-ipython
 paddleocr==2.6
 paddlepaddle==2.4.2
 protobuf==3.19.0
 pix2text==0.2.3.2
-poppler-utils
 PyPDF2==3.0.1
-scikit_learn==1.2.2
-transformers==4.34.1
-tensorflow
-# rflow==2.2.0
-pdfplumber==0.10.3
 pdfminer.six==20221105
 pdf2image==1.16.3
+ipython
+poppler-utils
+scikit-learn
+transformers
+tensorflow
+# rflow==2.2.0
+pdfplumber

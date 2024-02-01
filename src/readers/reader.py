@@ -25,12 +25,9 @@ class Reader:
 
     def read(self, args):
         '''
-          read the document and save it into folder
+            read the document and save it into folder
         '''
         if hasattr(self.format_reader, 'read'):
             return self.format_reader.read(self.file_path, args)
         else:
             raise NotImplementedError(f"Format reader {self.format_reader.__class__.__name__} does not have read method")
-    
-
-        
