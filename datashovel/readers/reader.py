@@ -2,7 +2,6 @@ class Reader:
     def __init__(self, file_path):
         self.file_path = file_path
         self.format_reader = self._create_format_reader()
-        self.read()
 
     def _create_format_reader(self):
         file_extension = self.file_path.split('.')[-1].lower()
