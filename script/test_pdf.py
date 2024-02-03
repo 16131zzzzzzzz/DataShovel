@@ -9,5 +9,5 @@ sys.path.append(parent_dir)
 
 from datashovel.readers.pdfreader import PdfReader
 
-reader = PdfReader("../input/example/subgraph.pdf")
+reader = PdfReader("../input/example/subgraph.pdf", "../output/")
 reader.read()
