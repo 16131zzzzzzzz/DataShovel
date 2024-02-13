@@ -1,6 +1,6 @@
 <script setup>
-import { ref,onMounted } from 'vue';
-
+import {defineEmits, ref,onMounted } from 'vue';
+let bgColor = ref('black');
 const boxesData = ref([]);
 onMounted(async () => {
   await fetchJsonData('/text.json')
@@ -65,13 +65,27 @@ async function fetchJsonData(filePath) {
     console.error('Error reading JSON file', error);
   }
 }
+const emit = defineEmits(['page-clicked'])
+const emitPage = (page) => {
+  // Emit the custom event with the page data
+  emit('page-clicked', page);
+}
+const changeColor=()=>{ 
+  console.log('change color');
+  bgColor.value = 'lightblue';
+}
+const resetColor=()=>{ 
+  console.log('reset color');
+  bgColor.value = 'black';
+}
 
 </script>
 
 <template>
   <div class="DS-json">
-    <div class ='DS-json__items' v-for="(item,i) in boxesData">
-    <div class="DS-json__items--head">Box {{ i }} on Page {{ item.page }} ({{ item.left}},{{ item.top }},{{ item.width }},{{ item.height }})</div>
+    <div class ='DS-json__items' v-on:mouseover="changeColor" 
+      v-on:mouseout="resetColor"  @click="emitPage(item.page)" v-for="(item,i) in boxesData">
+    <div class="DS-json__items--head" >Box {{ i }} on Page {{ item.page }} ({{ item.left}},{{ item.top }},{{ item.width }},{{ item.height }})</div>
       {{ item.content }}
     </div>
   </div>
@@ -85,6 +99,7 @@ async function fetchJsonData(filePath) {
   flex-direction: column;
   flex :0.35;
   overflow-y: auto;
+  
   @include e(items){
     border: 1px solid #000;
     margin: 20px;
@@ -96,6 +111,7 @@ async function fetchJsonData(filePath) {
       font-size: 9px;
       font-weight: normal;
       margin-bottom: 10px;
+      
     }
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="DS-pdf" ref="pdfContainer" @scroll="handleScroll">
-    <PDFV :url="pdfUrl" :page-number="pageNumber" @page-change="handlePageChange"/>
+    <PDFV :url="pdfUrl" :pageNumber="pageNumber" @page-change="handlePageChange"/>
     <div v-for="(box, index) in filteredBoxesData" :key="index" class="box" :style="{ left: box.left + 'px', top: box.top + 'px', width: box.width + 'px', height: box.height + 'px' }"></div>
   </div>
 </template>
@@ -9,10 +9,9 @@
 import { ref, onMounted, watch,computed } from 'vue';
 import PDFV from './PDFViewer.vue';
 const boxesData = ref([]);
-const pageNumber = ref(2); // 默认渲染第一页
-
+let pageNumber = ref(1); // 默认渲染第一页
+const props = defineProps(['pageNumber']);
 const pdfUrl = "/test.pdf"; // PDF 文件的路径
-
 onMounted(async () => {
   await fetchJsonData('/text.json')
   .then(function(){
@@ -27,7 +26,7 @@ onMounted(async () => {
   });
 });
 
-let scale = 0.8;
+let scale = 1.02;
 async function fetchJsonData(filePath) {
   try {
     const response = await fetch(filePath);
@@ -39,8 +38,8 @@ async function fetchJsonData(filePath) {
             const bbox = entry.bbox[i];
             const [left, top, width, height] = bbox;
             boxesData.value.push({
-              left: left / 2.08 * scale+450,
-              top: top / 2.08 * scale+120,
+              left: left / 2.08 * scale+180,
+              top: top / 2.08 * scale+105,
               width: width / 2.08 * scale,
               height: height / 2.08 * scale,
               page: entry.pageNum,
@@ -59,7 +58,7 @@ watch(pageNumber, (newPage) => {
 });
 
 // 计算属性，根据页面过滤框的数据
-const filteredBoxesData = computed(() => {
+let filteredBoxesData = computed(() => {
   return boxesData.value.filter(box => box.page === pageNumber.value);
 });
  
@@ -67,18 +66,26 @@ const filteredBoxesData = computed(() => {
 function handlePageChange(newPage) {
   pageNumber.value = newPage;
 }
+
+watch(() => props.pageNumber, (newValue, oldValue) => {
+  // Handle the prop change here
+  console.log('currentPage prop changed from', oldValue, 'to', newValue);
+  pageNumber.value = newValue;
+  filteredBoxesData= computed(() => {
+  return boxesData.value.filter(box => box.page === pageNumber.value);
+});
+});
 </script>
 
 <style scoped lang="scss">
 @include b(pdf){
   border: 1px solid #000;
   flex :0.35;
-  height: 100vh;
-  width: 100vh;
+  overflow: hidden;
 }
 
 .box {
   position: absolute;
-  border: 2px solid red; /* 设置框的边框样式 */
+  border: 2px solid blue; /* 设置框的边框样式 */
 }
 </style>

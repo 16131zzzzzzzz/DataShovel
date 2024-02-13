@@ -9,6 +9,8 @@ import Layout from './Layout/index.vue'
 <style lang="scss">
 #app{
   height: 100%;
-  margin-bottom: auto;
+  min-width:2000px;
+  padding: 0%;
+  margin: 0%;
 }
 </style>
