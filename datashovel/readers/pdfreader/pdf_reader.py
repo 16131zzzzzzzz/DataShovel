@@ -1,16 +1,15 @@
-# from .pdformer.pdformer import Pdformer
-from .paper_reader.src.pdf_reader import pdf_reader
+from .pdformer.pdformer import Pdformer
+from input.config.conf import *
+import json
 
 class PdfReader():
-    def __init__(self, file_path, output_path):
-        # self.former = Pdformer(file_path)
-        self.file_path = file_path
-        self.output_path = output_path
-        self.reader = pdf_reader(file_path, output_path, "lcnet", "CPU")
+    def __init__(self):
+        self.result_file = result_file
 
-    def read(self):
+    def read(self, file_path, args):
         '''
           read the document and save it into folder
         '''
-        # self.former.pdf2json()
-        self.reader.pdf_to_txt()
+        root_tree = Pdformer().pdf2json()
+        with open(self.result_file, "w") as f:
+            json.dump(root_tree, f, indent=2)
