@@ -5,19 +5,17 @@ import json
 import copy
 import tensorflow as tf
 from transformers import TFBertModel, BertTokenizer
-
+from input.config.conf import *
 from ..util.util import *
 
-BERT_TITLE_MODEL_PATH = "resources/pretrained_model/bert-title/model_4epoch.h5"
-PRE_TRAINED_MODEL_NAME = "resources/pretrained_model/bert-base-uncased"
-
 class TitleDetecter():
-    def __init__(self, pdf_file, textbox_file, pics_folder, output_dir, temp_folder):
+    def __init__(self, textbox_file):
         self.PDF_file = pdf_file
+        self.pics_dir = pics_directory
+        self.output_dir = output_directory
+        self.temp_dir = temp_directory
+
         self.textbox_file = textbox_file
-        self.pics_folder = pics_folder
-        self.output_dir = output_dir
-        self.temp_folder = temp_folder
         self.new_text_boxes = None
         self.layout = None
 
@@ -43,7 +41,7 @@ class TitleDetecter():
         #不同pdf被pdfminer解析出的box信息存放在对应的textbox
              text_boxes = json.load(f)
         bert_encoder = TFBertModel.from_pretrained(PRE_TRAINED_MODEL_NAME) #可以将输入的文本转换为高维向量表示
-        #模型构建
+#模型构建
         input_word_ids = tf.keras.Input(shape=(16,), dtype=tf.int32, name="input_word_ids") #input层
         embedding = bert_encoder([input_word_ids])  #[batch_size, sequence_length, hidden_size]
 
@@ -53,7 +51,7 @@ class TitleDetecter():
         output = tf.keras.layers.Dense(1, activation='sigmoid')(dense)
         model = tf.keras.Model(inputs=[input_word_ids], outputs=output)
 
-        pages = os.listdir(self.pics_folder)
+        pages = os.listdir(self.pics_dir)
         filtered_list=[]
         new_text_boxes={}
 
@@ -74,7 +72,7 @@ class TitleDetecter():
                 else:
                     new_text_boxes[str(i)].remove(box)
 
-        with open(os.path.join(self.temp_folder, 'origin_list2.txt'), 'w') as f:
+        with open(os.path.join(self.temp_dir, 'origin_list2.txt'), 'w') as f:
             for item in filtered_list:
                 f.write("%s\n" % item)
 
@@ -87,7 +85,7 @@ class TitleDetecter():
         prediction = model.predict(filtered_list)
 
         merged_array = np.concatenate(( text_list.reshape(-1, 1), prediction), axis=1)
-        with open(os.path.join(self.temp_folder, 'ans_list.txt'), 'w') as f:
+        with open(os.path.join(self.temp_dir, 'ans_list.txt'), 'w') as f:
             for item in merged_array:
                 f.write("%s\n" % item)
 
@@ -95,7 +93,7 @@ class TitleDetecter():
         for i in range(len(merged_array)):
             if float(merged_array[i][1]) > filter_threhold:
                 ans_array = np.vstack((ans_array, merged_array[i]))
-        with open(os.path.join(self.temp_folder, 'ans_title_list.txt'), 'w') as f:
+        with open(os.path.join(self.temp_dir, 'ans_title_list.txt'), 'w') as f:
             for item in ans_array:
                 f.write("%s\n" % item)
 
@@ -110,7 +108,7 @@ class TitleDetecter():
 
         self.new_text_boxes = new_text_boxes
         main_instance.new_text_boxes = new_text_boxes
-        with open(os.path.join(self.temp_folder, 'new_text_boxes.json'), "w") as f:
+        with open(os.path.join(self.temp_dir, 'new_text_boxes.json'), "w") as f:
             json.dump(new_text_boxes, f, indent=2)
 
     def merge_title(self, main_instance):
@@ -118,11 +116,11 @@ class TitleDetecter():
         page_height, page_width = get_page_size(self.PDF_file)
 
         num=-1
-        pages = os.listdir(self.pics_folder)
+        pages = os.listdir(self.pics_dir)
         for i,page in enumerate(pages):
             layout.setdefault(str(i), [])
             temp=["", -1,-1,-1,-1]  ##防止不同page的同一位置
-            img_fp = os.path.join(self.pics_folder, pages[i])
+            img_fp = os.path.join(self.pics_dir, pages[i])
             #字典的键为当前页面的索引"i"，值为标题信息列表。
             image = Image.open(img_fp)
             cood_h = image.size[1] / page_height
@@ -143,7 +141,7 @@ class TitleDetecter():
 
         self.layout = layout
         main_instance.layout = layout
-        with open(os.path.join(self.temp_folder, 'layout_title.txt'), "w") as f:
+        with open(os.path.join(self.temp_dir, 'layout_title.txt'), "w") as f:
             json.dump(layout, f, indent=2)
 
     def detector(self, main_instance):

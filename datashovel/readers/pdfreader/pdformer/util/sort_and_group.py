@@ -3,16 +3,20 @@ import json
 import copy
 from PIL import Image
 
-from .util import *
+from readers.pdfreader.pdformer.util.util import *
+from input.config.conf import *
 
 class SortGrouper():
-    def __init__(self, pdf_file, textbox_file, pics_folder, new_bboxes, layout, output_dir, temp_folder):
+    def __init__(self, textbox_file, new_bboxes, layout):
         self.PDF_file = pdf_file
+        self.pics_dir = pics_directory
+        self.output_dir = output_directory
+        self.temp_dir = temp_directory
+
+        #TODO
         self.textbox_file = textbox_file
-        self.pics_folder = pics_folder
         self.new_bboxes = new_bboxes
-        self.output_dir = output_dir
-        self.temp_folder = temp_folder
+
         self.layout = layout
         self.new_layout = None
         self.final_layout = None
@@ -142,13 +146,13 @@ class SortGrouper():
 
     def sort_boxes(self,main_instance):
         new_layout = copy.deepcopy(self.layout)
-        pages = os.listdir(self.pics_folder)
+        pages = os.listdir(self.pics_dir)
         for i,page in enumerate(pages):
             new_layout[str(i)] = self.sort_and_group_boxes(self.layout[str(i)])
 
         self.new_layout= new_layout
         main_instance.new_layout = new_layout
-        with open(os.path.join(self.temp_folder,'layout_title2.json'), "w") as f:
+        with open(os.path.join(self.temp_dir,'layout_title2.json'), "w") as f:
             json.dump(new_layout, f, indent=2)
 
     def possible_boxes(self, box_list, title_box, a=20):
@@ -177,7 +181,7 @@ class SortGrouper():
         print(len(self.new_bboxes["0"])) ##为什么会被修改？？？
         final_layout = {}
         left_boxes = {}
-        pages = os.listdir(self.pics_folder)
+        pages = os.listdir(self.pics_dir)
         for i, page in enumerate(pages):
             box_choosefrom = self.new_bboxes[str(i)]
             titles = self.new_layout[str(i)]
@@ -185,7 +189,7 @@ class SortGrouper():
 
             for column in reversed(list(titles.keys())): #逆序得到column
                 column_titles = self.new_layout[str(i)][column]
-                for item in reversed(column_titles):  ####针对某一个标题section
+                for item in reversed(column_titles):  #### 针对某一列下某一标题
                     section_list=[]
                     section_list.append(item)
                     filtered_boxes = self.possible_boxes(box_choosefrom, item)
@@ -199,29 +203,29 @@ class SortGrouper():
             left_boxes.setdefault(str(i), [])
             left_boxes[str(i)] = box_choosefrom
 
-        with open(os.path.join(self.temp_folder,'final_layout.json'), "w") as f:
+        with open(os.path.join(self.temp_dir,'final_layout.json'), "w") as f:
             json.dump(final_layout, f, indent=2)
         self.final_layout = final_layout
         main_instance.final_layout = final_layout
 
-        with open(os.path.join(self.temp_folder,'left_boxes.json'), "w") as f:
+        with open(os.path.join(self.temp_dir,'left_boxes.json'), "w") as f:
             json.dump(left_boxes, f, indent=2)
         self.left_boxes = left_boxes
         main_instance.left_boxes = left_boxes
 
     def sort_boxes2(self,main_instance):
-        with open(os.path.join(self.temp_folder,'final_layout.json'), "r") as f:
+        with open(os.path.join(self.temp_dir,'final_layout.json'), "r") as f:
             final_layout = json.loads(f.read())
 
         final_layout2 = {}
         final_layout2 = copy.deepcopy(final_layout)
-        pages = os.listdir(self.pics_folder)
+        pages = os.listdir(self.pics_dir)
         pnum = len(pages)
         for i, box in enumerate(pages): ##某一页
             for x, fsection in enumerate(final_layout[str(i)]):
                 final_layout2[str(i)][x][1] = self.sort_and_group_boxes2(fsection[1])
             if (i+1)<pnum :
-                img_fp = os.path.join(self.pics_folder, pages[i+1])
+                img_fp = os.path.join(self.pics_dir, pages[i+1])
                 #字典的键为当前页面的索引"i"，值为标题信息列表。
                 image = Image.open(img_fp)
                 pic_width = image.size[0]
@@ -233,7 +237,7 @@ class SortGrouper():
 
         self.final_layout2 = final_layout2
         main_instance.final_layout2 = final_layout2
-        with open(os.path.join(self.temp_folder,'final_layout2.json'), "w") as f:
+        with open(os.path.join(self.temp_dir,'final_layout2.json'), "w") as f:
             json.dump(final_layout2, f, indent=2)
 
     def sort_and_group (self, main_instance):
