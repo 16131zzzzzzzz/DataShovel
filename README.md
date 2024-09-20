@@ -1,5 +1,6 @@
 # DataShovel
-<img src="https://github.com/user-attachments/assets/a362d4c2-f366-40c1-b045-12526c5e0af0" alt="project image" width="400"/>
+<img src="https://github.com/user-attachments/assets/a362d4c2-f366-40c1-b045-12526c5e0af0" alt="project image" width="200" height="200"/>
+
 ## 💡 What is DataShovel?
 
 > **When everyone digs for gold, sell shovels.**
