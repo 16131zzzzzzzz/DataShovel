@@ -32,7 +32,6 @@ Find the ***conf.py*** under **`"input/config/"`**, and freely modify the defaul
 
 ### 🚀 PDF Extractor and Uploader
 <img src="https://github.com/user-attachments/assets/de46c5bb-7179-4302-8d99-423d1d837c52" alt="project image" width="700" height="400"/>
-
 #### **Loading a PDF and run**
 
 **`input_directory`**: the default input directory is under **`"input/"`**.
