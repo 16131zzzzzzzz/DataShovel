@@ -1,4 +1,5 @@
 # DataShovel
+![image](https://github.com/user-attachments/assets/a362d4c2-f366-40c1-b045-12526c5e0af0)
 
 ## 💡 What is DataShovel?
 
